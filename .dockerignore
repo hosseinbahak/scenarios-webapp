@@ -2,8 +2,9 @@ __pycache__
 *.pyc
 *.pyo
 *.pyd
-.env
 .venv
+.env
 .git
 .gitignore
 README.md
+# data/
