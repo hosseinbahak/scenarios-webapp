@@ -35,8 +35,10 @@ def get_item(item_id: int):
     return {"id": item_id, **item.model_dump()}
 
 # ---------- Chat API برای سناریوی صفر ----------
+from typing import List, Optional, Literal
+
 class Message(BaseModel):
-    type: Literal["text", "image"]
+    type: Literal["text","image"]
     content: str
 
 class ChatRequest(BaseModel):
@@ -52,26 +54,15 @@ class ChatResponse(BaseModel):
 def chat(req: ChatRequest):
     if not req.messages:
         raise HTTPException(400, "messages cannot be empty")
-
     last = req.messages[-1]
-
     if last.type == "text":
         t = last.content.strip()
         tl = t.lower()
-
         if tl == "ping":
             return ChatResponse(message="pong")
-
         if tl.startswith("return base random key:"):
-            key = t.split(":", 1)[1].strip()
-            return ChatResponse(base_random_keys=[key])
-
+            return ChatResponse(base_random_keys=[t.split(":",1)[1].strip()])
         if tl.startswith("return member random key:"):
-            key = t.split(":", 1)[1].strip()
-            return ChatResponse(member_random_keys=[key])
-
-        # اینجا بعداً منطق اصلی دستیار خریدت رو صدا بزن
+            return ChatResponse(member_random_keys=[t.split(":",1)[1].strip()])
         return ChatResponse(message="دریافت شد؛ بفرمایید دنبال چه محصول/برندی هستید؟")
-
-    # اگر تصویر بود (برای آینده)
     return ChatResponse(message="تصویر دریافت شد؛ لطفاً توضیح متنی هم بفرستید.")
